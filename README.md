@@ -1,6 +1,7 @@
 # Mergent JavaScript Library
 
 [![npm version](https://badge.fury.io/js/mergent.svg)](https://badge.fury.io/js/mergent)
+[![CI](https://github.com/mergentlabs/mergent-js/actions/workflows/ci.yml/badge.svg)](https://github.com/mergentlabs/mergent-js/actions/workflows/ci.yml)
 
 The Mergent JavaScript library provides convenient access to the Mergent API
 from applications written in the JavaScript language.
