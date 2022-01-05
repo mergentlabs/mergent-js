@@ -1,6 +1,6 @@
 {
   "name": "mergent",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JavaScript library for the Mergent API. See https://mergent.co for details.",
   "keywords": [],
   "author": "Mergent",
