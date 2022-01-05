@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "express": "^4.17.2",
+    "mergent": "file:../.."
+  },
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  }
+}
