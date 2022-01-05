@@ -1,0 +1,16 @@
+{
+  "ignorePatterns": "/examples",
+  "overrides": [
+    // JavaScript
+    {
+      "files": ["**/*.js"],
+      "extends": ["airbnb-base", "prettier"]
+    },
+    // TypeScript
+    {
+      "files": ["**/*.ts"],
+      "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
+      "parserOptions": { "project": "./tsconfig.eslint.json" }
+    }
+  ]
+}

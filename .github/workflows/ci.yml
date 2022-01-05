@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+      - name: Set up Dependencies
+        run: npm ci
+      - name: ESLint
+        run: npm run lint
+      - name: Jest
+        run: npm test
