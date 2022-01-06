@@ -64,7 +64,7 @@ run `npm test` to run the tests.
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/mergentlabs/mergent-javascript.
+https://github.com/mergentlabs/mergent-js.
 
 ## License
 
