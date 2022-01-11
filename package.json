@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.com/mergentlabs/mergent-js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
