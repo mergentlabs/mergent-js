@@ -69,6 +69,7 @@ https://github.com/mergentlabs/mergent-js.
 ## Distributing
 
 1. Update the version with `npm version <version>`
+1. Package with `npm run package`
 1. Publish with `npm publish`
 
 ## License

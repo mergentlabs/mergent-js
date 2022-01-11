@@ -20,7 +20,7 @@
     "format": "prettier . -c",
     "lint": "eslint . --ext js,ts",
     "lf": "npm run format -- --write && npm run lint -- --fix",
-    "prepublish": "tsc"
+    "package": "npm run build && npm pack"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
