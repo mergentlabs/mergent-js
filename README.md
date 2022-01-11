@@ -66,6 +66,11 @@ run `npm test` to run the tests.
 Bug reports and pull requests are welcome on GitHub at
 https://github.com/mergentlabs/mergent-js.
 
+## Distributing
+
+1. Update the version with `npm version <version>`
+1. Publish with `npm publish`
+
 ## License
 
 The gem is available as open source under the terms of the
