@@ -1,5 +1,5 @@
 import Client from "../Client";
-import Task from "../types/Task";
+import Task, { CreateTaskParams } from "../types/Task";
 
 export default class Tasks {
   private client: Client;
@@ -8,7 +8,7 @@ export default class Tasks {
     this.client = client;
   }
 
-  create(params: {}): Promise<Task> {
+  create(params: CreateTaskParams): Promise<Task> {
     return this.client.post("tasks", params);
   }
 }
