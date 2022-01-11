@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "express": "^4.17.2",
-    "mergent": "file:../.."
+    "mergent": "file:../../dist"
   },
   "private": true,
   "scripts": {
