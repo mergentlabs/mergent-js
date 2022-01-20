@@ -7,8 +7,8 @@ export default class RequestValidator {
     this.apiKey = apiKey;
   }
 
-  buildSignatureFor(url: string, body: string) {
-    const data = (url || "") + (body || "");
+  buildSignatureFor(body: string) {
+    const data = body || "";
 
     return crypto
       .createHmac("sha1", this.apiKey)
@@ -16,7 +16,7 @@ export default class RequestValidator {
       .digest("base64");
   }
 
-  validateSignature(url: string, body: string, signature: string) {
-    return this.buildSignatureFor(url, body) === signature;
+  validateSignature(body: string, signature: string) {
+    return this.buildSignatureFor(body) === signature;
   }
 }
