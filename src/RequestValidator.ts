@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import * as crypto from "crypto";
 
 export default class RequestValidator {
   private apiKey: string;
@@ -7,7 +7,7 @@ export default class RequestValidator {
     this.apiKey = apiKey;
   }
 
-  buildSignatureFor(body: string) {
+  buildSignature(body: string) {
     const data = body || "";
 
     return crypto
@@ -17,6 +17,6 @@ export default class RequestValidator {
   }
 
   validateSignature(body: string, signature: string) {
-    return this.buildSignatureFor(body) === signature;
+    return this.buildSignature(body) === signature;
   }
 }

@@ -2,17 +2,17 @@ import RequestValidator from "../src/RequestValidator";
 
 const validator = new RequestValidator("12345");
 
-describe("#buildSignatureFor", () => {
+describe("#buildSignature", () => {
   test("builds a HMAC-SHA1 signature for the provided body", () => {
     const body = "foo";
 
-    const signature = validator.buildSignatureFor(body);
+    const signature = validator.buildSignature(body);
 
     expect(signature).toBe("QjZpKdTK/iwkUWiz3seoPbJHA0I=");
   });
 
   test("is valid with empty params", () => {
-    const signature = validator.buildSignatureFor("");
+    const signature = validator.buildSignature("");
 
     expect(signature).toBe("KT7FsM8VSFUliCTsf6xdxj0XaRU=");
   });
@@ -20,7 +20,7 @@ describe("#buildSignatureFor", () => {
 
 describe("#validateSignature", () => {
   test("returns true when the signature is valid", () => {
-    const signature = validator.buildSignatureFor("");
+    const signature = validator.buildSignature("");
 
     expect(validator.validateSignature("", signature)).toBe(true);
   });
