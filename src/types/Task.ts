@@ -1,14 +1,15 @@
 import Request from "./Request";
 
 export default interface Task {
-  name: string;
-  description: string;
+  id: string;
+  name?: string;
+  queue: string;
   status: string;
 }
 
 export interface CreateTaskParams {
   name?: string;
-  description?: string;
+  queue?: string;
   request: Request;
 
   /**
