@@ -24,7 +24,7 @@ describe("#post", () => {
 
     await client.post("resource", params);
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.mergent.co/v1/resource",
+      "https://api.mergent.co/v2/resource",
       {
         method: "POST",
         headers: {

@@ -6,7 +6,24 @@ jest.mock("../../src/Client");
 const client = new Client({ apiKey: "" });
 const tasks = new Tasks(client);
 
-test("#create", async () => {
-  tasks.create({ request: { url: "" } });
-  expect(client.post).toHaveBeenCalledTimes(1);
+describe("#create", () => {
+  describe("with a queue param", () => {
+    test("makes a request to create a Task on the specified queue", async () => {
+      tasks.create({ queue: "foo", request: { url: "" } });
+      expect(client.post).toHaveBeenCalledWith("tasks", {
+        queue: "foo",
+        request: { url: "" },
+      });
+    });
+  });
+
+  describe("without a queue param", () => {
+    test("makes a request to create a Task on the default queue", async () => {
+      tasks.create({ request: { url: "" } });
+      expect(client.post).toHaveBeenCalledWith("tasks", {
+        queue: "default",
+        request: { url: "" },
+      });
+    });
+  });
 });

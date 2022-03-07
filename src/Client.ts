@@ -9,7 +9,7 @@ export default class Client {
   }
 
   async post<T>(resource: string, params: object): Promise<T> {
-    const url = `https://api.mergent.co/v1/${resource}`;
+    const url = `https://api.mergent.co/v2/${resource}`;
     const headers = {
       Authorization: `Bearer ${this.config.apiKey}`,
       "Content-Type": "application/json",

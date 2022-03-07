@@ -9,6 +9,7 @@ export default class Tasks {
   }
 
   create(params: CreateTaskParams): Promise<Task> {
-    return this.client.post("tasks", params);
+    const defaultParams = { queue: "default" };
+    return this.client.post("tasks", { ...defaultParams, ...params });
   }
 }
