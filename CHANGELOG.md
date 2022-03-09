@@ -5,6 +5,7 @@
   - Make `name` optional
   - Add optional `queue` attribute to Task that defaults to `default`
   - Remove `description` from Task
+- Add support for creating Schedules
 
 ## [0.1.2] - 2022-01-20
 
