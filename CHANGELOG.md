@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.0.0] - 2022-03-10
+
 - Switch to the V2 API
   - Add `id` attribute to Task
   - Make `name` optional
