@@ -7,6 +7,7 @@ const app = express();
 const mergent = new Mergent("...");
 
 app.get("/", (req, res) => {
+  // Create Task
   mergent.tasks
     .create({
       request: {
@@ -14,6 +15,16 @@ app.get("/", (req, res) => {
       },
     })
     .then((task) => console.log(task))
+    .catch((error) => console.error(error));
+
+  // Create Job
+  mergent.jobs
+    .create({
+      activity: {
+        name: "...",
+      },
+    })
+    .then((jobs) => console.log(jobs))
     .catch((error) => console.error(error));
 
   res.send("Check your console...");
