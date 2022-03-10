@@ -1,17 +1,19 @@
-import Request from "./Request";
+interface Activity {
+  name: string;
+  args?: string[];
+}
 
-export default interface Task {
+export default interface Job {
   id: string;
   name?: string;
   queue: string;
-  status: string;
-  request: Request;
+  activity: Activity;
 }
 
-export interface CreateTaskParams {
+export interface CreateJobParams {
   name?: string;
   queue?: string;
-  request: Request;
+  activity: Activity;
 
   /**
    * ISO 8601 timestamp
