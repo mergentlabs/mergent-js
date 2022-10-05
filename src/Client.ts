@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { MergentErrorParams, MergentAPIError } from "./errors";
+import { MergentAPIError, MergentAPIErrorParams } from "./errors";
 
 export default class Client {
   private config: ClientConfig;
@@ -26,7 +26,7 @@ export default class Client {
     }
 
     try {
-      const errorParams = (await response.json()) as MergentErrorParams;
+      const errorParams = (await response.json()) as MergentAPIErrorParams;
       throw new MergentAPIError(errorParams);
     } catch (err) {
       if (err instanceof MergentAPIError) {

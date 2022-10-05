@@ -1,13 +1,11 @@
 /* eslint-disable max-classes-per-file */
 
-export interface MergentErrorParams {
+export interface MergentAPIErrorParams {
   message: string;
 }
 
-class MergentError extends Error {
-  constructor(params: MergentErrorParams) {
+export class MergentAPIError extends Error {
+  constructor(params: MergentAPIErrorParams) {
     super(params.message);
   }
 }
-
-export class MergentAPIError extends MergentError {}

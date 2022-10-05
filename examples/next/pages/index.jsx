@@ -1,43 +1,33 @@
-const Home = () => {
-  async function createTask(event) {
-    event.preventDefault();
-    await fetch("/api/createMergentTask", { method: "POST" });
-  }
+import { useState } from "react";
 
-  async function createSchedule(event) {
+const Home = () => {
+  /**
+   * 3. onSubmit call the API route or server-side function to enqueue the Task.
+   *    Using an API route or server-side function ensures that the Mergent API
+   *    key will not be exposed to anyone on the client-side.
+   */
+  const createTask = async (event) => {
     event.preventDefault();
-    await fetch("/api/createMergentSchedule", { method: "POST" });
-  }
+    const res = await fetch("/api/tasks/log.enqueue");
+
+    const message = await res.text();
+    setMessage(message);
+  };
+
+  const [message, setMessage] = useState("Nothing has been enqueued yet...");
 
   return (
     <>
       <div>
-        <ol>
-          <li>Press Button, calls /api/createMergentTask</li>
-          <li>
-            Mergent Task is created (make sure to specify
-            YOURAPI/api/mergentWebhook)
-          </li>
-          <li>Mergent Task is invoked, calls /api/mergentWebhook</li>
-          <li>View Logs</li>
-        </ol>
+        <p>
+          When the below button is pressed, a request is made to the
+          `/api/tasks/log.enqueue` route which enqueues a Log Task defined at
+          `/api/tasks/log`.
+        </p>
         <form onSubmit={createTask}>
-          <button>Create Mergent Task</button>
+          <button>Enqueue Mergent Task</button>
         </form>
-      </div>
-      <div>
-        <ol>
-          <li>Press Button, calls /api/createMergentSchedule</li>
-          <li>
-            Mergent Schedule is created (make sure to specify
-            YOURAPI/api/mergentWebhook)
-          </li>
-          <li>Mergent Schedule is invoked, calls /api/mergentWebhook</li>
-          <li>View Logs</li>
-        </ol>
-        <form onSubmit={createSchedule}>
-          <button>Create Mergent Schedule</button>
-        </form>
+        <p>{message}</p>
       </div>
     </>
   );

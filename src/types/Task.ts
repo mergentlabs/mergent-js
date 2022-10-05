@@ -2,14 +2,15 @@ import Request from "./Request";
 
 export default interface Task {
   id: string;
-  name?: string;
-  queue: string;
   status: string;
+
+  /** @deprecated */
+  name?: string;
+  /** @deprecated */
+  queue?: string;
 }
 
 export interface CreateTaskParams {
-  name?: string;
-  queue?: string;
   request: Request;
 
   /**
@@ -21,4 +22,9 @@ export interface CreateTaskParams {
    * ISO 8601 duration
    */
   delay?: string;
+
+  /** @deprecated */
+  name?: string;
+  /** @deprecated */
+  queue?: string;
 }
