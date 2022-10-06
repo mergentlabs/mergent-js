@@ -37,12 +37,14 @@ export const Task = (
   }
 
   // Infer the baseURL, if possible.
-  // Vercel: https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
-  // Render: https://render.com/docs/environment-variables
-  // Netlify: https://docs.netlify.com/configure-builds/environment-variables/#deploy-urls-and-metadata
+  // - Render: https://render.com/docs/environment-variables
+  // - Netlify: https://docs.netlify.com/configure-builds/environment-variables/#deploy-urls-and-metadata
+  //
+  // Unfortunately, Vercel does not set a production base URL environment
+  // variable, so it must be done manually.
+  // - Vercel: https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
   const baseURL =
     process.env.BASE_URL ||
-    process.env.VERCEL_URL ||
     process.env.RENDER_EXTERNAL_URL ||
     process.env.URL ||
     process.env.DEPLOY_URL ||
