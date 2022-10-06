@@ -47,7 +47,6 @@ export const Task = (
     process.env.BASE_URL ||
     process.env.RENDER_EXTERNAL_URL ||
     process.env.URL ||
-    process.env.DEPLOY_URL ||
     options?.baseURL;
   if (baseURL === undefined) {
     const msg =
