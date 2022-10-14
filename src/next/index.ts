@@ -58,7 +58,7 @@ export const Task = (
   const url = new URL(path, baseURL).toString();
 
   /**
-   * Handle the incoming request from Mergent. Catches errors throwin in the
+   * Handle the incoming request from Mergent. Catches errors thrown in the
    * TaskHandler and returns them to Mergent.
    */
   const nextAPIHandler = async (req: NextApiRequest, res: NextApiResponse) => {
