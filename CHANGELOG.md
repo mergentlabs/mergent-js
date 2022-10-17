@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Deprecate `Task#scheduled_for: String` in favor of `Task#scheduledFor: Date`
+
 ## [1.0.0] - 2022-03-10
 
 - Switch to the V2 API

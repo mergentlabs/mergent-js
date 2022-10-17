@@ -14,8 +14,10 @@ export interface CreateTaskParams {
 
   /**
    * ISO 8601 timestamp
+   * @deprecated Prefer `scheduledFor: Date` to `scheduled_for: String`.
    */
   scheduled_for?: string;
+  scheduledFor?: Date;
 
   /**
    * ISO 8601 duration
