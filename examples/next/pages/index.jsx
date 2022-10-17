@@ -2,9 +2,9 @@ import { useState } from "react";
 
 const Home = () => {
   /**
-   * 3. onSubmit call the API route or server-side function to enqueue the Task.
-   *    Using an API route or server-side function ensures that the Mergent API
-   *    key will not be exposed to anyone on the client-side.
+   * 3. `onSubmit`, call the API route or server-side function to enqueue the
+   *    Task. Using an API route or server-side function ensures that the
+   *    Mergent API key will not be exposed to anyone on the client-side.
    */
   const createTask = async (event) => {
     event.preventDefault();
