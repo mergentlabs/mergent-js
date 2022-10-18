@@ -16,9 +16,14 @@ export default async (req, res) => {
       url: baseURL + "/api/tasks/log",
       body: "Hello, world!",
     },
+    delay: { seconds: 5 },
   });
 
   // All Next.js API routes must send a response to the caller.
   // See: https://nextjs.org/docs/api-routes/introduction
-  res.status(200).send(`Task ${task.id} has been enqueued successfully. 🎊`);
+  res
+    .status(200)
+    .send(
+      `Task ${task.id} has been enqueued successfully with a delay of 5 seconds. 🎊`
+    );
 };
