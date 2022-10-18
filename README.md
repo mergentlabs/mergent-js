@@ -27,10 +27,11 @@ const Mergent = require("mergent");
 // set the Mergent API key
 const mergent = new Mergent("...");
 
-// create a Task
+// create a Task that will make an HTTP request in 5 minutes
 mergent.tasks
   .create({
-    request: { url: "..." },
+    request: { url: "...", body: "Hello, world!" },
+    delay: { minutes: 5 },
   })
   .then((task) => console.log(task))
   .catch((error) => console.error(error));
@@ -44,10 +45,11 @@ import Mergent from "mergent";
 // set the Mergent API key
 const mergent = new Mergent("...");
 
-// create a Task
+// create a Task that will make an HTTP request in 5 minutes
 mergent.tasks
   .create({
-    request: { url: "..." },
+    request: { url: "...", body: "Hello, world!" },
+    delay: { minutes: 5 },
   })
   .then((task) => console.log(task))
   .catch((error) => console.error(error));
