@@ -1,4 +1,5 @@
 import Client from "../../src/Client";
+import Duration from "../../src/types/Duration";
 import Tasks from "../../src/resources/Tasks";
 
 jest.mock("../../src/Client");
@@ -45,11 +46,31 @@ describe("#create", () => {
       const scheduled_for = "2022-10-17T22:28:17.615Z";
       const scheduledFor = new Date();
       tasks.create({ request: { url: "" }, scheduledFor, scheduled_for });
-
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
         scheduled_for: scheduledFor.toISOString(),
+      });
+    });
+  });
+
+  describe("with a delay param", () => {
+    test("makes a request to create a Task, setting the delay to the specified Duration serialized to an ISO 8601 Duration string", () => {
+      const delay: Duration = { minutes: 7, seconds: 3 };
+      tasks.create({ request: { url: "" }, delay });
+      expect(client.post).toHaveBeenCalledWith("tasks", {
+        queue: "default",
+        request: { url: "" },
+        delay: "PT7M3S",
+      });
+    });
+
+    test("makes a request to create a Task, setting the delay to the specified ISO 8601 Duration string", () => {
+      tasks.create({ request: { url: "" }, delay: "PT5M" });
+      expect(client.post).toHaveBeenCalledWith("tasks", {
+        queue: "default",
+        request: { url: "" },
+        delay: "PT5M",
       });
     });
   });

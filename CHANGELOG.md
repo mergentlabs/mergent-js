@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Add `Task#delay: Duration` to simplify the construction of ISO 8601 Durations
 - Deprecate `Task#scheduled_for: String` in favor of `Task#scheduledFor: Date`
 
 ## [1.0.0] - 2022-03-10

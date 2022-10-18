@@ -1,3 +1,4 @@
+import Duration from "./Duration";
 import Request from "./Request";
 
 export default interface Task {
@@ -22,5 +23,5 @@ export interface CreateTaskParams {
   /**
    * ISO 8601 duration
    */
-  delay?: string;
+  delay?: Duration | string;
 }
