@@ -38,7 +38,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
     "jest": "^27.4.5",
-    "next": "^12.3.1",
     "node-mocks-http": "^1.11.0",
     "prettier": "^2.5.1",
     "ts-jest": "^27.1.2",
