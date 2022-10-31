@@ -25,3 +25,5 @@ export interface CreateTaskParams {
    */
   delay?: Duration | string;
 }
+
+export type UpdateTaskParams = Partial<CreateTaskParams>;

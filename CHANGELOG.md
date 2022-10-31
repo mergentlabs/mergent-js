@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Add methods to retrieve, update, delete, and list Tasks
+  - Specifically, `tasks.retrieve`, `tasks.update`, `tasks.delete`, `tasks.list`
+
 ## [1.1.0] - 2022-10-18
 
 - We've made it easier to schedule a Task using a `Date`, or delay a Task using a `Duration`.

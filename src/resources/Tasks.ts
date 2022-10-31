@@ -1,7 +1,7 @@
 import { iso8601Duration } from "../duration";
 import type Client from "../Client";
 import type Task from "../types/Task";
-import type { CreateTaskParams } from "../types/Task";
+import type { CreateTaskParams, UpdateTaskParams } from "../types/Task";
 
 export default class Tasks {
   private client: Client;
@@ -11,7 +11,33 @@ export default class Tasks {
   }
 
   create(params: CreateTaskParams): Promise<Task> {
-    const modifiedParams = {
+    const defaultParams = { queue: "default" };
+    return this.client.post("tasks", {
+      ...defaultParams,
+      ...Tasks.requestParams(params),
+    });
+  }
+
+  retrieve(id: string): Promise<Task> {
+    return this.client.get(`tasks/${id}`);
+  }
+
+  update(id: string, params: UpdateTaskParams): Promise<Task> {
+    return this.client.patch(`tasks/${id}`, Tasks.requestParams(params));
+  }
+
+  delete(id: string): Promise<void> {
+    return this.client.delete(`tasks/${id}`);
+  }
+
+  list(): Promise<[Task]> {
+    return this.client.get("tasks");
+  }
+
+  static requestParams<T extends CreateTaskParams | UpdateTaskParams>(
+    params: T
+  ): Partial<T> {
+    return {
       ...params,
       scheduled_for: params.scheduledFor?.toISOString() ?? params.scheduled_for,
       scheduledFor: undefined,
@@ -20,8 +46,5 @@ export default class Tasks {
           ? iso8601Duration(params.delay)
           : params.delay,
     };
-
-    const defaultParams = { queue: "default" };
-    return this.client.post("tasks", { ...defaultParams, ...modifiedParams });
   }
 }
