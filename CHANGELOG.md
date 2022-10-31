@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.2.0] - 2022-10-31
+
 - Add methods to retrieve, update, delete, and list Tasks
   - Specifically, `tasks.retrieve`, `tasks.update`, `tasks.delete`, `tasks.list`
 
