@@ -1,5 +1,6 @@
-import Client from "../Client";
-import Schedule, { CreateScheduleParams } from "../types/Schedule";
+import type Client from "../Client";
+import type Schedule from "../types/Schedule";
+import type { CreateScheduleParams } from "../types/Schedule";
 
 export default class Schedules {
   private client: Client;

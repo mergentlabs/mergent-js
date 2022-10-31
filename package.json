@@ -27,7 +27,7 @@
     "tinyduration": "^3.2.2"
   },
   "devDependencies": {
-    "@tsconfig/recommended": "^1.0.1",
+    "@tsconfig/strictest": "^1.0.2",
     "@types/jest": "^27.0.3",
     "@types/node-fetch": "^2.5.12",
     "@typescript-eslint/eslint-plugin": "^5.9.0",

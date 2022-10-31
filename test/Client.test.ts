@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import Client from "../src/Client";
-import Task from "../src/types/Task";
+import type Task from "../src/types/Task";
 
 jest.mock("node-fetch");
 

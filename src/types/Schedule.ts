@@ -1,4 +1,4 @@
-import Request from "./Request";
+import type Request from "./Request";
 
 export default interface Schedule {
   id: string;

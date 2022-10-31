@@ -1,6 +1,7 @@
 import { iso8601Duration } from "../duration";
-import Client from "../Client";
-import Task, { CreateTaskParams } from "../types/Task";
+import type Client from "../Client";
+import type Task from "../types/Task";
+import type { CreateTaskParams } from "../types/Task";
 
 export default class Tasks {
   private client: Client;

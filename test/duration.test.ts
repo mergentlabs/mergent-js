@@ -1,4 +1,4 @@
-import Duration from "../src/types/Duration";
+import type Duration from "../src/types/Duration";
 import { iso8601Duration } from "../src/duration";
 
 describe("iso8601Duration()", () => {

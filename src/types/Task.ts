@@ -1,5 +1,5 @@
-import Duration from "./Duration";
-import Request from "./Request";
+import type Duration from "./Duration";
+import type Request from "./Request";
 
 export default interface Task {
   id: string;

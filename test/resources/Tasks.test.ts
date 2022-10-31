@@ -1,5 +1,5 @@
 import Client from "../../src/Client";
-import Duration from "../../src/types/Duration";
+import type Duration from "../../src/types/Duration";
 import Tasks from "../../src/resources/Tasks";
 
 jest.mock("../../src/Client");
