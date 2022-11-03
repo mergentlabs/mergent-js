@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.3.0] - 2022-11-03
+
 - Add method to run a Task immediately (`tasks.run`)
 
 ## [1.2.0] - 2022-10-31
