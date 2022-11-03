@@ -150,3 +150,11 @@ describe("#list", () => {
     expect(client.get).toHaveBeenCalledWith("tasks");
   });
 });
+
+describe("#run", () => {
+  test("makes a request to run the specified Task", () => {
+    const id = "08072539-82a6-43d3-aaf9-28156533c84f";
+    tasks.run(id);
+    expect(client.post).toHaveBeenCalledWith(`tasks/${id}/run`);
+  });
+});

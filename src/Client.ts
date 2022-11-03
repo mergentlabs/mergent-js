@@ -12,7 +12,7 @@ export default class Client {
     return this.makeRequestExpectingJSONResponseBody("GET", `/${resource}`);
   }
 
-  async post<T>(resource: string, params: object): Promise<T> {
+  async post<T>(resource: string, params?: object): Promise<T> {
     return this.makeRequestExpectingJSONResponseBody(
       "POST",
       `/${resource}`,

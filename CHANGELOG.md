@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add method to run a Task immediately (`tasks.run`)
+
 ## [1.2.0] - 2022-10-31
 
 - Add methods to retrieve, update, delete, and list Tasks

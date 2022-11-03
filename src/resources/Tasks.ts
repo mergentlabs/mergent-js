@@ -34,6 +34,10 @@ export default class Tasks {
     return this.client.get("tasks");
   }
 
+  run(id: string): Promise<Task> {
+    return this.client.post(`tasks/${id}/run`);
+  }
+
   static requestParams<T extends CreateTaskParams | UpdateTaskParams>(
     params: T
   ): Partial<T> {
