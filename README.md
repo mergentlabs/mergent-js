@@ -71,6 +71,7 @@ https://github.com/mergentlabs/mergent-js.
 ## Distributing
 
 1. Update the version with `npm version <version>` (this makes a new commit)
+1. Amend that commit with updates to the CHANGELOG
 1. Push with `git push --tags`
 1. Package with `npm run package`
 1. Publish with `npm publish`
