@@ -1,5 +1,24 @@
 import fetch from "node-fetch";
-import { MergentAPIError, MergentAPIErrorParams } from "./errors";
+import type { Response } from "node-fetch";
+import {
+  MergentAPIError,
+  MergentAPIErrorParams,
+  MergentAPIInvalidJSONError,
+} from "./errors";
+
+export async function parseJSON(response: Response) {
+  try {
+    const body = await response.json();
+    if (response.ok) return body;
+
+    throw new MergentAPIError(body as MergentAPIErrorParams);
+  } catch (err) {
+    if (err instanceof MergentAPIError) {
+      throw err;
+    }
+    throw new MergentAPIInvalidJSONError();
+  }
+}
 
 export default class Client {
   private config: ClientConfig;
@@ -9,87 +28,39 @@ export default class Client {
   }
 
   async get<T>(resource: string): Promise<T> {
-    return this.makeRequestExpectingJSONResponseBody("GET", `/${resource}`);
+    const response = await this.makeRequest("GET", `/${resource}`);
+    return parseJSON(response) as T;
   }
 
   async post<T>(resource: string, params?: object): Promise<T> {
-    return this.makeRequestExpectingJSONResponseBody(
-      "POST",
-      `/${resource}`,
-      params
-    );
+    const response = await this.makeRequest("POST", `/${resource}`, params);
+    return parseJSON(response) as T;
   }
 
   async patch<T>(resource: string, params: object): Promise<T> {
-    return this.makeRequestExpectingJSONResponseBody(
-      "PATCH",
-      `/${resource}`,
-      params
-    );
+    const response = await this.makeRequest("PATCH", `/${resource}`, params);
+    return parseJSON(response) as T;
   }
 
   async delete(resource: string): Promise<void> {
-    return this.makeRequestExpectingEmptyResponseBody("DELETE", `/${resource}`);
+    await this.makeRequest("DELETE", `/${resource}`);
   }
 
-  async makeRequestExpectingJSONResponseBody<T>(
-    method: "GET" | "PATCH" | "POST",
+  async makeRequest(
+    method: "GET" | "PATCH" | "POST" | "DELETE",
     path: string,
     bodyObject?: object
-  ): Promise<T> {
+  ): Promise<Response> {
     const headers = {
       Authorization: `Bearer ${this.config.apiKey}`,
       ...(bodyObject ? { "Content-Type": "application/json" } : {}),
     };
     const body = bodyObject ? JSON.stringify(bodyObject) : undefined;
-    const response = await fetch(`https://api.mergent.co/v2${path}`, {
+    return fetch(`https://api.mergent.co/v2${path}`, {
       method,
       headers,
       body,
     });
-
-    try {
-      const json = await response.json();
-      if (response.ok) return json as T;
-
-      throw new MergentAPIError(json as MergentAPIErrorParams);
-    } catch (err) {
-      if (err instanceof MergentAPIError) {
-        throw err;
-      }
-
-      throw new MergentAPIError({
-        message: "Invalid JSON received from the Mergent API",
-      });
-    }
-  }
-
-  async makeRequestExpectingEmptyResponseBody(
-    method: "DELETE",
-    path: string
-  ): Promise<void> {
-    const headers = {
-      Authorization: `Bearer ${this.config.apiKey}`,
-    };
-    const response = await fetch(`https://api.mergent.co/v2${path}`, {
-      method,
-      headers,
-    });
-
-    if (!response.ok) {
-      try {
-        const json = await response.json();
-        throw new MergentAPIError(json as MergentAPIErrorParams);
-      } catch (err) {
-        if (err instanceof MergentAPIError) {
-          throw err;
-        }
-
-        throw new MergentAPIError({
-          message: "Invalid JSON received from the Mergent API",
-        });
-      }
-    }
   }
 }
 
