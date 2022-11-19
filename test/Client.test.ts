@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
-import Client from "../src/Client";
-import type Task from "../src/types/Task";
+import { MergentAPIError, MergentAPIInvalidJSONError } from "../src/errors";
+import Client, { parseJSON } from "../src/Client";
 
 jest.mock("node-fetch");
 
@@ -11,179 +11,156 @@ const apiKey = "apikey";
 const client = new Client({ apiKey });
 const params = { request: { url: "https://example.com" } };
 
-function mockFetchRespose(status: number, body?: object) {
+function mockFetchResponse(status: number, body?: object) {
   fetchMock.mockReturnValue(
-    Promise.resolve(new Response(JSON.stringify(body), { status }))
+    Promise.resolve(
+      new Response(body === undefined ? undefined : JSON.stringify(body), {
+        status,
+      })
+    )
   );
 }
 
-describe("#get", () => {
-  test("makes a GET request with the specified resource", async () => {
-    const responseBody = [{ id: "id" }];
-    mockFetchRespose(200, responseBody);
+describe("parseJSON()", () => {
+  describe("with a successful response", () => {
+    describe("with valid JSON", () => {
+      test("returns the parsed JSON", async () => {
+        const body = { id: "id" };
+        mockFetchResponse(200, body);
+        const response = await fetch("/resource");
 
-    await client.get("resource");
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.mergent.co/v2/resource",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-  });
-});
+        expect(await parseJSON(response)).toStrictEqual(body);
+      });
+    });
 
-describe("#post", () => {
-  test("makes a POST request with the specified resource and params", async () => {
-    const responseBody = { id: "id" };
-    mockFetchRespose(200, responseBody);
+    describe("with invalid JSON", () => {
+      test("throws a MergentAPIInvalidJSONError", async () => {
+        mockFetchResponse(200);
+        const response = await fetch("/resource");
 
-    await client.post("resource", params);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.mergent.co/v2/resource",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      }
-    );
-  });
-});
-
-describe("#patch", () => {
-  test("makes a PATCH request with the specified resource and params", async () => {
-    const responseBody = { id: "id" };
-    mockFetchRespose(200, responseBody);
-
-    await client.patch("resource", params);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.mergent.co/v2/resource",
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      }
-    );
-  });
-});
-
-describe("#delete", () => {
-  test("makes a DELETE request with the specified resource", async () => {
-    mockFetchRespose(204);
-
-    await client.delete("resource");
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.mergent.co/v2/resource",
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    );
-  });
-});
-
-describe("#makeRequestExpectingJSONResponse", () => {
-  it("makes the specified request", async () => {
-    const responseBody = { id: "id" };
-    mockFetchRespose(200, responseBody);
-
-    await client.makeRequestExpectingJSONResponseBody("POST", "/tasks", params);
-    expect(fetchMock).toHaveBeenCalledWith("https://api.mergent.co/v2/tasks", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(params),
+        await expect(parseJSON(response)).rejects.toThrowError(
+          MergentAPIInvalidJSONError
+        );
+      });
     });
   });
 
-  describe("when the response status is a 2xx", () => {
-    test("parses the response body JSON as T", async () => {
-      const responseBody = { name: "hello" };
-      mockFetchRespose(200, responseBody);
+  describe("with an unsuccessful response", () => {
+    describe("with valid Error JSON", () => {
+      test("throws a MergentAPIError", async () => {
+        mockFetchResponse(422, { message: "An error has occured." });
+        const response = await fetch("/resource");
 
-      const task: Task = await client.makeRequestExpectingJSONResponseBody(
-        "PATCH",
-        "/tasks"
+        await expect(parseJSON(response)).rejects.toThrowError(MergentAPIError);
+      });
+    });
+
+    describe("with invalid JSON", () => {
+      test("throws a MergentAPIInvalidJSONError", async () => {
+        mockFetchResponse(422);
+        const response = await fetch("/resource");
+
+        await expect(parseJSON(response)).rejects.toThrowError(
+          MergentAPIInvalidJSONError
+        );
+      });
+    });
+  });
+});
+
+describe("Client", () => {
+  describe("#get", () => {
+    test("makes a GET request with the specified resource", async () => {
+      const responseBody = [{ id: "id" }];
+      mockFetchResponse(200, responseBody);
+
+      await client.get("resource");
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.mergent.co/v2/resource",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
       );
-      expect(task.name).toBe("hello");
     });
   });
 
-  describe("when the response status is a 4xx", () => {
-    test("throws a MergentAPIError with the parsed error JSON", async () => {
-      const responseBody = { message: "an api error" };
-      mockFetchRespose(400, responseBody);
+  describe("#post", () => {
+    test("makes a POST request with the specified resource and params", async () => {
+      const responseBody = { id: "id" };
+      mockFetchResponse(200, responseBody);
 
-      await expect(
-        client.makeRequestExpectingJSONResponseBody("GET", "/tasks")
-      ).rejects.toThrowError(responseBody.message);
+      await client.post("resource", params);
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.mergent.co/v2/resource",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
+        }
+      );
     });
   });
 
-  describe("when the response status is a 5xx", () => {
-    test("throws a MergentError with an invalid JSON message", async () => {
-      mockFetchRespose(500);
+  describe("#patch", () => {
+    test("makes a PATCH request with the specified resource and params", async () => {
+      const responseBody = { id: "id" };
+      mockFetchResponse(200, responseBody);
 
-      await expect(
-        client.makeRequestExpectingJSONResponseBody("POST", "/tasks")
-      ).rejects.toThrowError("Invalid JSON received from the Mergent API");
-    });
-  });
-});
-
-describe("#makeRequestExpectingEmptyResponseBody", () => {
-  it("makes the specified request", async () => {
-    mockFetchRespose(204);
-
-    await client.makeRequestExpectingEmptyResponseBody("DELETE", "/tasks");
-    expect(fetchMock).toHaveBeenCalledWith("https://api.mergent.co/v2/tasks", {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
+      await client.patch("resource", params);
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.mergent.co/v2/resource",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
+        }
+      );
     });
   });
 
-  describe("when the response status is a 2xx", () => {
-    test("parses the response body JSON as T", async () => {
-      mockFetchRespose(204);
+  describe("#delete", () => {
+    test("makes a DELETE request with the specified resource", async () => {
+      mockFetchResponse(204);
 
-      await expect(
-        client.makeRequestExpectingEmptyResponseBody("DELETE", "/tasks")
-      ).resolves.not.toThrowError();
+      await client.delete("resource");
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.mergent.co/v2/resource",
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
+      );
     });
   });
 
-  describe("when the response status is a 4xx", () => {
-    test("throws a MergentAPIError with the parsed error JSON", async () => {
-      const responseBody = { message: "an api error" };
-      mockFetchRespose(400, responseBody);
+  describe("#makeRequest", () => {
+    it("makes the specified request", async () => {
+      const responseBody = { id: "id" };
+      mockFetchResponse(200, responseBody);
 
-      await expect(
-        client.makeRequestExpectingEmptyResponseBody("DELETE", "/tasks")
-      ).rejects.toThrowError(responseBody.message);
-    });
-  });
-
-  describe("when the response status is a 5xx", () => {
-    test("throws a MergentError with an invalid JSON message", async () => {
-      mockFetchRespose(500);
-
-      await expect(
-        client.makeRequestExpectingEmptyResponseBody("DELETE", "/tasks")
-      ).rejects.toThrowError("Invalid JSON received from the Mergent API");
+      await client.makeRequest("POST", "/tasks", params);
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.mergent.co/v2/tasks",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
+        }
+      );
     });
   });
 });
