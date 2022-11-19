@@ -2,6 +2,8 @@
 
 export interface MergentAPIErrorParams {
   message: string;
+  param?: string;
+  errors?: MergentAPIErrorParams[];
 }
 
 export class MergentError extends Error {
@@ -12,9 +14,18 @@ export class MergentError extends Error {
 }
 
 export class MergentAPIError extends MergentError {
+  param?: string | undefined;
+
+  errors?: MergentAPIError[] | undefined;
+
   constructor(params: MergentAPIErrorParams) {
     super(params.message);
     Object.setPrototypeOf(this, MergentAPIError.prototype);
+
+    this.param = params.param;
+    this.errors = params.errors?.map(
+      (errorParams) => new MergentAPIError(errorParams)
+    );
   }
 }
 
