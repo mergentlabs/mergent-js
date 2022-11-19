@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Fix for when error JSON was not parsed correctly (fixes [#181](https://github.com/mergentlabs/mergent-js/issues/181))
+
 ## [1.3.0] - 2022-11-03
 
 - Add method to run a Task immediately (`tasks.run`)
