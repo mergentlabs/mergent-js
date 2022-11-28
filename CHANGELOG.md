@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.4.0] - 2022-11-28
+
 - Use friendlier duration format (e.g., `2s`, `30m`, `24h`)
 - Remove days, weeks, months, and years from `Duration` to avoid confusion
   across daylight savings time zone transitions
