@@ -23,8 +23,7 @@
     "package": "npm run build && npm pack"
   },
   "dependencies": {
-    "node-fetch": "^2.6.0",
-    "tinyduration": "^3.2.2"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@tsconfig/strictest": "^1.0.2",

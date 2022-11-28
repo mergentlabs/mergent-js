@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+- Use friendlier duration format (e.g., `2s`, `30m`, `24h`)
+- Remove days, weeks, months, and years from `Duration` to avoid confusion
+  across daylight savings time zone transitions
+- Remove `tinyduration` dependency
+
 ## [1.3.1] - 2022-11-18
 
 - Fix for when error JSON was not parsed correctly (fixes [#181](https://github.com/mergentlabs/mergent-js/issues/181))

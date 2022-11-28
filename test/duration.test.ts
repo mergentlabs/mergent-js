@@ -1,25 +1,25 @@
 import type Duration from "../src/types/Duration";
-import { iso8601Duration } from "../src/duration";
+import { durationToString } from "../src/duration";
 
-describe("iso8601Duration()", () => {
-  test("returns the ISO 8601 representation of the Duration", () => {
-    const cases: [string, Duration][] = [
-      ["PT5M", { minutes: 5 }],
-      ["P1M", { months: 1 }],
-      ["PT1M", { minutes: 1 }],
-      ["P12W", { weeks: 12 }],
-      ["P12Y10M", { years: 12, months: 10 }],
-      ["P12Y10M13D", { years: 12, months: 10, days: 13 }],
-      ["P2DT1M", { days: 2, minutes: 1 }],
-      ["PT0.5M", { minutes: 0.5 }],
-      ["P0.5YT0.5M", { years: 0.5, minutes: 0.5 }],
-      ["PT0S", { months: 0 }],
-      ["PT0S", { weeks: 0 }],
-      ["PT0S", { days: 0 }],
+describe("duration()", () => {
+  test("returns the string representation of the Duration", () => {
+    const cases: [string | undefined, Duration][] = [
+      ["1s", { seconds: 1 }],
+      ["100s", { seconds: 100 }],
+      ["5m", { minutes: 5 }],
+      ["1.5h", { hours: 1.5 }],
+      ["1.5h2m60s", { hours: 1.5, minutes: 2, seconds: 60 }],
+      ["2h45m", { hours: 2, minutes: 45 }],
+      ["2h", { hours: 2 }],
+      ["0s", { seconds: 0 }],
+      ["0s", { seconds: 0 }],
+      ["0s", { seconds: 0 }],
+      [undefined, {}],
     ];
-    cases.forEach(([expectedISOString, duration]) => {
-      const actualISOString = iso8601Duration(duration);
-      expect(actualISOString).toStrictEqual(expectedISOString);
+
+    cases.forEach(([expected, input]) => {
+      const actual = durationToString(input);
+      expect(actual).toStrictEqual(expected);
     });
   });
 });
