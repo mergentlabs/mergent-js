@@ -20,9 +20,6 @@ export interface CreateTaskParams {
   scheduled_for?: string;
   scheduledFor?: Date;
 
-  /**
-   * ISO 8601 duration
-   */
   delay?: Duration | string;
 }
 

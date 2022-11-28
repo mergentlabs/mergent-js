@@ -1,6 +1,25 @@
-import { serialize } from "tinyduration";
 import type Duration from "./types/Duration";
 
-export const iso8601Duration = (duration: Duration) => serialize(duration);
+export function durationToString(duration: Duration): string | undefined {
+  let str = "";
+
+  if (duration.hours) {
+    str += `${duration.hours}h`;
+  }
+
+  if (duration.minutes) {
+    str += `${duration.minutes}m`;
+  }
+
+  if (duration.seconds) {
+    str += `${duration.seconds}s`;
+  }
+
+  if (str === "") {
+    return undefined;
+  }
+
+  return str;
+}
 
 export default {};

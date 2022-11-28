@@ -1,4 +1,4 @@
-import { iso8601Duration } from "../duration";
+import { durationToString } from "../duration";
 import type Client from "../Client";
 import type Task from "../types/Task";
 import type { CreateTaskParams, UpdateTaskParams } from "../types/Task";
@@ -47,7 +47,7 @@ export default class Tasks {
       scheduledFor: undefined,
       delay:
         typeof params.delay === "object"
-          ? iso8601Duration(params.delay)
+          ? durationToString(params.delay)
           : params.delay,
     };
   }

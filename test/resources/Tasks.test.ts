@@ -55,22 +55,22 @@ describe("#create", () => {
   });
 
   describe("with a delay param", () => {
-    test("makes a request to create a Task, setting the delay to the specified Duration serialized to an ISO 8601 Duration string", () => {
+    test("makes a request to create a Task, setting the delay to the specified Duration serialized to a duration string", () => {
       const delay: Duration = { minutes: 7, seconds: 3 };
       tasks.create({ request: { url: "" }, delay });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
-        delay: "PT7M3S",
+        delay: "7m3s",
       });
     });
 
-    test("makes a request to create a Task, setting the delay to the specified ISO 8601 Duration string", () => {
-      tasks.create({ request: { url: "" }, delay: "PT5M" });
+    test("makes a request to create a Task, setting the delay to the specified string", () => {
+      tasks.create({ request: { url: "" }, delay: "5m" });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
-        delay: "PT5M",
+        delay: "5m",
       });
     });
   });
@@ -92,7 +92,7 @@ describe("#update", () => {
       delay: { minutes: 5 },
     });
     expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
-      delay: "PT5M",
+      delay: "5m",
     });
   });
 
@@ -119,18 +119,18 @@ describe("#update", () => {
   });
 
   describe("with a delay param", () => {
-    test("makes a request to update a Task, setting the delay to the specified Duration serialized to an ISO 8601 Duration string", () => {
+    test("makes a request to update a Task, setting the delay to the specified Duration serialized to a duration string", () => {
       const delay: Duration = { minutes: 7, seconds: 3 };
       tasks.update(id, { delay });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
-        delay: "PT7M3S",
+        delay: "7m3s",
       });
     });
 
-    test("makes a request to create a Task, setting the delay to the specified ISO 8601 Duration string", () => {
-      tasks.update(id, { delay: "PT5M" });
+    test("makes a request to create a Task, setting the delay to the specified string", () => {
+      tasks.update(id, { delay: "5m" });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
-        delay: "PT5M",
+        delay: "5m",
       });
     });
   });
