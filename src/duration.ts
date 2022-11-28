@@ -3,15 +3,15 @@ import type Duration from "./types/Duration";
 export function durationToString(duration: Duration): string | undefined {
   let str = "";
 
-  if (duration.hours !== undefined) {
+  if (duration.hours) {
     str += `${duration.hours}h`;
   }
 
-  if (duration.minutes !== undefined) {
+  if (duration.minutes) {
     str += `${duration.minutes}m`;
   }
 
-  if (duration.seconds !== undefined) {
+  if (duration.seconds) {
     str += `${duration.seconds}s`;
   }
 

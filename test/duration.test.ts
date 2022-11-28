@@ -11,9 +11,9 @@ describe("duration()", () => {
       ["1.5h2m60s", { hours: 1.5, minutes: 2, seconds: 60 }],
       ["2h45m", { hours: 2, minutes: 45 }],
       ["2h", { hours: 2 }],
-      ["0s", { seconds: 0 }],
-      ["0s", { seconds: 0 }],
-      ["0s", { seconds: 0 }],
+      [undefined, { seconds: 0 }],
+      [undefined, { minutes: 0 }],
+      [undefined, { hours: 0 }],
       [undefined, {}],
     ];
 
