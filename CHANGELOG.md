@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.5.0] - 2023-02-26
+
+- Fix incorrect error parsing
+- Improve reliability of outgoing requests
+
 ## [1.4.0] - 2022-11-28
 
 - Use friendlier duration format (e.g., `2s`, `30m`, `24h`)
