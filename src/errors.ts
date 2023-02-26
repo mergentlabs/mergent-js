@@ -6,12 +6,7 @@ export interface MergentAPIErrorParams {
   errors?: MergentAPIErrorParams[];
 }
 
-export class MergentError extends Error {
-  constructor(message?: string) {
-    super(message);
-    Object.setPrototypeOf(this, MergentError.prototype);
-  }
-}
+class MergentError extends Error {}
 
 export class MergentAPIError extends MergentError {
   param?: string | undefined;
@@ -20,7 +15,6 @@ export class MergentAPIError extends MergentError {
 
   constructor(params: MergentAPIErrorParams) {
     super(params.message);
-    Object.setPrototypeOf(this, MergentAPIError.prototype);
 
     this.param = params.param;
     this.errors = params.errors?.map(
@@ -30,8 +24,13 @@ export class MergentAPIError extends MergentError {
 }
 
 export class MergentAPIInvalidJSONError extends MergentError {
-  constructor() {
-    super("Invalid JSON received from the Mergent API");
-    Object.setPrototypeOf(this, MergentAPIInvalidJSONError.prototype);
+  constructor(status: number) {
+    super(`[${status}] Invalid JSON received from the Mergent API`);
+  }
+}
+
+export class MergentAPIUnexpectedStatusCodeError extends MergentError {
+  constructor(status: number) {
+    super(`[${status}] Unexpected status code received from the Mergent API`);
   }
 }

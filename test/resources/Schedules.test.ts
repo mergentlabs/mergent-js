@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { describe, expect, it, jest } from "@jest/globals";
+
 import Client from "../../src/Client";
 import Schedules from "../../src/resources/Schedules";
 
@@ -8,7 +11,7 @@ const schedules = new Schedules(client);
 
 describe("#create", () => {
   describe("with a queue param", () => {
-    test("makes a request to create a Schedule on the specified queue", async () => {
+    it("makes a request to create a Schedule on the specified queue", async () => {
       schedules.create({ queue: "foo", request: { url: "" } });
       expect(client.post).toHaveBeenCalledWith("schedules", {
         queue: "foo",
@@ -18,7 +21,7 @@ describe("#create", () => {
   });
 
   describe("without a queue param", () => {
-    test("makes a request to create a Schedule on the default queue", async () => {
+    it("makes a request to create a Schedule on the default queue", async () => {
       schedules.create({ request: { url: "" } });
       expect(client.post).toHaveBeenCalledWith("schedules", {
         queue: "default",

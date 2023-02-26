@@ -1,166 +1,306 @@
-import fetch from "node-fetch";
-import { MergentAPIError, MergentAPIInvalidJSONError } from "../src/errors";
-import Client, { parseJSON } from "../src/Client";
-
-jest.mock("node-fetch");
-
-const fetchMock = fetch as unknown as jest.Mock;
-const { Response } = jest.requireActual("node-fetch");
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { afterAll, describe, expect, it } from "@jest/globals";
+import { Response } from "node-fetch";
+import Client from "../src/Client";
+import {
+  MergentAPIError,
+  MergentAPIErrorParams,
+  MergentAPIInvalidJSONError,
+  MergentAPIUnexpectedStatusCodeError,
+} from "../src/errors";
+import startMockServer from "./mocks/server";
 
 const apiKey = "apikey";
-const client = new Client({ apiKey });
-const params = { request: { url: "https://example.com" } };
+const authorization = `Bearer ${apiKey}`;
+const url = "https://api.mergent.co/v2/teapot";
 
-function mockFetchResponse(status: number, body?: object) {
-  fetchMock.mockReturnValue(
-    Promise.resolve(
-      new Response(body === undefined ? undefined : JSON.stringify(body), {
-        status,
-      })
-    )
-  );
+interface MockServerResponseBody {
+  status: number;
+  request: {
+    method: string;
+    headers: {
+      Authorization: string | undefined;
+      "Content-Type": string | undefined;
+    };
+    body: object | undefined;
+  };
 }
 
-describe("parseJSON()", () => {
-  describe("with a successful response", () => {
-    describe("with valid JSON", () => {
-      test("returns the parsed JSON", async () => {
-        const body = { id: "id" };
-        mockFetchResponse(200, body);
-        const response = await fetch("/resource");
+const mockServer = startMockServer((rest) => [
+  rest.all(url, async (req, res, ctx) => {
+    let resStatus = 500;
 
-        expect(await parseJSON(response)).toStrictEqual(body);
-      });
-    });
+    if (req.headers.get("Authorization") === authorization) {
+      const hasJSONContentType =
+        req.headers.get("Content-Type") === "application/json";
 
-    describe("with invalid JSON", () => {
-      test("throws a MergentAPIInvalidJSONError", async () => {
-        mockFetchResponse(200);
-        const response = await fetch("/resource");
+      switch (req.method) {
+        case "GET":
+          if (hasJSONContentType) break;
+          resStatus = 200;
+          break;
+        case "POST":
+          resStatus = hasJSONContentType ? 201 : 415;
+          break;
+        case "PATCH":
+          resStatus = hasJSONContentType ? 200 : 415;
+          break;
+        case "DELETE":
+          if (hasJSONContentType) break;
+          resStatus = 204;
+          break;
+        default:
+          resStatus = 405;
+      }
+    } else {
+      resStatus = 401;
+    }
 
-        await expect(parseJSON(response)).rejects.toThrowError(
-          MergentAPIInvalidJSONError
-        );
-      });
-    });
-  });
+    const resBody: MockServerResponseBody = {
+      status: resStatus,
+      request: {
+        method: req.method,
+        headers: {
+          Authorization: req.headers.get("Authorization") ?? undefined,
+          "Content-Type": req.headers.get("Content-Type") ?? undefined,
+        },
+        body: await (async () => {
+          try {
+            return await req.json();
+          } catch {
+            return undefined;
+          }
+        })(),
+      },
+    };
 
-  describe("with an unsuccessful response", () => {
-    describe("with valid Error JSON", () => {
-      test("throws a MergentAPIError", async () => {
-        mockFetchResponse(422, { message: "An error has occured." });
-        const response = await fetch("/resource");
+    return res(ctx.status(resStatus), ctx.json(resBody));
+  }),
+]);
 
-        await expect(parseJSON(response)).rejects.toThrowError(MergentAPIError);
-      });
-    });
-
-    describe("with invalid JSON", () => {
-      test("throws a MergentAPIInvalidJSONError", async () => {
-        mockFetchResponse(422);
-        const response = await fetch("/resource");
-
-        await expect(parseJSON(response)).rejects.toThrowError(
-          MergentAPIInvalidJSONError
-        );
-      });
-    });
-  });
-});
+afterAll(() => mockServer.close());
 
 describe("Client", () => {
-  describe("#get", () => {
-    test("makes a GET request with the specified resource", async () => {
-      const responseBody = [{ id: "id" }];
-      mockFetchResponse(200, responseBody);
+  const client = new Client({ apiKey });
 
-      await client.get("resource");
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://api.mergent.co/v2/resource",
-        {
+  describe("#get", () => {
+    it("makes a valid GET request to the specified resource", async () => {
+      const body = await client.get<MockServerResponseBody>("teapot");
+      expect(body).toStrictEqual({
+        status: 200,
+        request: {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: authorization,
           },
-        }
-      );
+        },
+      });
     });
   });
 
   describe("#post", () => {
-    test("makes a POST request with the specified resource and params", async () => {
-      const responseBody = { id: "id" };
-      mockFetchResponse(200, responseBody);
-
-      await client.post("resource", params);
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://api.mergent.co/v2/resource",
-        {
+    it("makes a valid POST request to the specified resource", async () => {
+      const params = {
+        some: "post params",
+      };
+      const body = await client.post<MockServerResponseBody>("teapot", params);
+      expect(body).toStrictEqual({
+        status: 201,
+        request: {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: authorization,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(params),
-        }
-      );
+          body: params,
+        },
+      });
     });
   });
 
   describe("#patch", () => {
-    test("makes a PATCH request with the specified resource and params", async () => {
-      const responseBody = { id: "id" };
-      mockFetchResponse(200, responseBody);
-
-      await client.patch("resource", params);
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://api.mergent.co/v2/resource",
-        {
+    it("makes a valid PATCH request to the specified resource", async () => {
+      const params = {
+        some: "patch params",
+      };
+      const body = await client.patch<MockServerResponseBody>("teapot", params);
+      expect(body).toStrictEqual({
+        status: 200,
+        request: {
           method: "PATCH",
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: authorization,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(params),
-        }
-      );
+          body: params,
+        },
+      });
     });
   });
 
   describe("#delete", () => {
-    test("makes a DELETE request with the specified resource", async () => {
-      mockFetchResponse(204);
-
-      await client.delete("resource");
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://api.mergent.co/v2/resource",
-        {
+    it("makes a valid DELETE request to the specified resource", async () => {
+      const body = await client.delete("teapot");
+      expect(body).toStrictEqual({
+        status: 204,
+        request: {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: authorization,
           },
-        }
-      );
+        },
+      });
+    });
+  });
+
+  describe("retryable", () => {
+    describe("when successful", () => {
+      it("returns the result of perform()", async () => {
+        let attempts = 0;
+        const response = await client.retryable(() => {
+          attempts += 1;
+          return Promise.resolve("");
+        });
+
+        expect(response).toBe("");
+        expect(attempts).toBe(1);
+      });
+    });
+
+    describe("when an error is thrown", () => {
+      it("retries up to three times, returning the result of the final perform()", async () => {
+        let attempts = 0;
+        const responsePromise = client.retryable(async () => {
+          attempts += 1;
+          throw new MergentAPIInvalidJSONError(400);
+        });
+
+        await expect(responsePromise).rejects.toThrow(
+          new MergentAPIInvalidJSONError(400)
+        );
+        expect(attempts).toBe(3);
+      });
+    });
+
+    describe("when an error is thrown, but a subsequent retry is successful", () => {
+      it("returns the result of the successful retry", async () => {
+        let attempts = 0;
+        const response = await client.retryable(async () => {
+          attempts += 1;
+
+          // throws two errors before resolving
+          if (attempts < 2) {
+            throw new MergentAPIInvalidJSONError(400);
+          }
+
+          return Promise.resolve("");
+        });
+
+        expect(response).toBe("");
+        expect(attempts).toBe(2);
+      });
     });
   });
 
   describe("#makeRequest", () => {
-    it("makes the specified request", async () => {
-      const responseBody = { id: "id" };
-      mockFetchResponse(200, responseBody);
-
-      await client.makeRequest("POST", "/tasks", params);
-      expect(fetchMock).toHaveBeenCalledWith(
-        "https://api.mergent.co/v2/tasks",
-        {
+    it("makes a valid request to the specified resource", async () => {
+      const params = {
+        some: "post params",
+      };
+      const response = await client.makeRequest("POST", "/teapot", params);
+      expect(response.status).toBe(201);
+      expect(await response.json()).toStrictEqual({
+        status: 201,
+        request: {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: authorization,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(params),
-        }
-      );
+          body: params,
+        },
+      });
+    });
+  });
+
+  describe("#handleResponse", () => {
+    describe("1xx", () => {
+      it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
+        const response100 = new Response(undefined, { status: 100 });
+        await expect(client.handleResponse(response100)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(100)
+        );
+
+        const response199 = new Response(undefined, { status: 199 });
+        await expect(client.handleResponse(response199)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(199)
+        );
+      });
+    });
+
+    describe("2xx", () => {
+      it("returns the json response body", async () => {
+        const body = { success: true };
+
+        const response200 = new Response(JSON.stringify(body), { status: 200 });
+        const response200Body = await client.handleResponse(response200);
+        expect(response200Body).toStrictEqual(body);
+
+        const response299 = new Response(JSON.stringify(body), { status: 299 });
+        const response299Body = await client.handleResponse(response299);
+        expect(response299Body).toStrictEqual(body);
+      });
+    });
+
+    describe("3xx", () => {
+      it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
+        const response300 = new Response(undefined, { status: 300 });
+        await expect(client.handleResponse(response300)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(300)
+        );
+
+        const response399 = new Response(undefined, { status: 399 });
+        await expect(client.handleResponse(response399)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(399)
+        );
+      });
+    });
+
+    describe("4xx", () => {
+      it("throws a MergentAPIError when the body has an error message", async () => {
+        const body = { message: "Something went wrong." };
+
+        const response400 = new Response(JSON.stringify(body), { status: 400 });
+        await expect(client.handleResponse(response400)).rejects.toThrow(
+          new MergentAPIError(body as unknown as MergentAPIErrorParams)
+        );
+
+        const response499 = new Response(JSON.stringify(body), { status: 499 });
+        await expect(client.handleResponse(response499)).rejects.toThrow(
+          new MergentAPIError(body as unknown as MergentAPIErrorParams)
+        );
+      });
+
+      it("throws a MergentAPIInvalidJSONError when the response body does not have an error message", async () => {
+        const response = new Response(JSON.stringify({}), { status: 400 });
+        await expect(client.handleResponse(response)).rejects.toThrow(
+          new MergentAPIInvalidJSONError(400)
+        );
+      });
+    });
+
+    describe("5xx", () => {
+      it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
+        const response500 = new Response(undefined, { status: 500 });
+        await expect(client.handleResponse(response500)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(500)
+        );
+
+        const response599 = new Response(undefined, { status: 599 });
+        await expect(client.handleResponse(response599)).rejects.toThrow(
+          new MergentAPIUnexpectedStatusCodeError(599)
+        );
+      });
     });
   });
 });

@@ -1,15 +1,10 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { describe, expect, it, test } from "@jest/globals";
 import {
-  MergentError,
   MergentAPIError,
   MergentAPIInvalidJSONError,
+  MergentAPIUnexpectedStatusCodeError,
 } from "../src/errors";
-
-describe("MergentError", () => {
-  it("has the correct prototype", () => {
-    const error = new MergentError("");
-    expect(error instanceof MergentError).toBe(true);
-  });
-});
 
 describe("MergentAPIError", () => {
   it("can be initailized from a Mergent API JSON response", () => {
@@ -37,16 +32,18 @@ describe("MergentAPIError", () => {
     expect(e2?.message).toBe("another error");
     expect(e2?.param).toBeUndefined();
   });
-
-  it("has the correct prototype", () => {
-    const error = new MergentAPIError({ message: "" });
-    expect(error instanceof MergentAPIError).toBe(true);
-  });
 });
 
-describe("MergentAPIInvalidJSONError", () => {
-  it("has the correct prototype", () => {
-    const error = new MergentAPIInvalidJSONError();
-    expect(error instanceof MergentAPIInvalidJSONError).toBe(true);
-  });
+test("MergentAPIInvalidJSONError", () => {
+  const error = new MergentAPIInvalidJSONError(500);
+  expect(error.message).toBe(
+    "[500] Invalid JSON received from the Mergent API"
+  );
+});
+
+test("MergentAPIUnexpectedStatusCodeError", () => {
+  const error = new MergentAPIUnexpectedStatusCodeError(500);
+  expect(error.message).toBe(
+    "[500] Unexpected status code received from the Mergent API"
+  );
 });

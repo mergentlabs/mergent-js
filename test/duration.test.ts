@@ -1,8 +1,11 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { describe, expect, it } from "@jest/globals";
+
 import type Duration from "../src/types/Duration";
 import { durationToString } from "../src/duration";
 
 describe("duration()", () => {
-  test("returns the string representation of the Duration", () => {
+  it("returns the string representation of the Duration", () => {
     const cases: [string | undefined, Duration][] = [
       ["1s", { seconds: 1 }],
       ["100s", { seconds: 100 }],
