@@ -26,16 +26,16 @@ export default class Tasks {
     return this.client.patch(`tasks/${id}`, Tasks.requestParams(params));
   }
 
-  delete(id: string): Promise<void> {
-    return this.client.delete(`tasks/${id}`);
+  run(id: string): Promise<Task> {
+    return this.client.post(`tasks/${id}/run`);
   }
 
   list(): Promise<[Task]> {
     return this.client.get("tasks");
   }
 
-  run(id: string): Promise<Task> {
-    return this.client.post(`tasks/${id}/run`);
+  delete(id: string): Promise<void> {
+    return this.client.delete(`tasks/${id}`);
   }
 
   static requestParams<T extends CreateTaskParams | UpdateTaskParams>(

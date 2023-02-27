@@ -139,11 +139,11 @@ describe("#update", () => {
   });
 });
 
-describe("#delete", () => {
-  it("makes a request to delete the specified Task", () => {
+describe("#run", () => {
+  it("makes a request to run the specified Task", () => {
     const id = "08072539-82a6-43d3-aaf9-28156533c84f";
-    tasks.delete(id);
-    expect(client.delete).toHaveBeenCalledWith(`tasks/${id}`);
+    tasks.run(id);
+    expect(client.post).toHaveBeenCalledWith(`tasks/${id}/run`);
   });
 });
 
@@ -154,10 +154,10 @@ describe("#list", () => {
   });
 });
 
-describe("#run", () => {
-  it("makes a request to run the specified Task", () => {
+describe("#delete", () => {
+  it("makes a request to delete the specified Task", () => {
     const id = "08072539-82a6-43d3-aaf9-28156533c84f";
-    tasks.run(id);
-    expect(client.post).toHaveBeenCalledWith(`tasks/${id}/run`);
+    tasks.delete(id);
+    expect(client.delete).toHaveBeenCalledWith(`tasks/${id}`);
   });
 });

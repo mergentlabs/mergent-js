@@ -3,9 +3,10 @@ import type Request from "./Request";
 
 export default interface Task {
   id: string;
-  name?: string;
+  name: string | undefined;
   queue: string;
   status: string;
+  request: Request;
 }
 
 export interface CreateTaskParams {
