@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.5.1] - 2023-02-27
+
+- Fix for retries/errors on task deletion requests
+
 ## [1.5.0] - 2023-02-26
 
 - Fix incorrect error parsing
