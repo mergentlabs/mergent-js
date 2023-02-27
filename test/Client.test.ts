@@ -47,7 +47,8 @@ const mockServer = startMockServer((rest) => [
           break;
         case "DELETE":
           if (hasJSONContentType) break;
-          resStatus = 204;
+          // 200 instead of 204 since we do not parse JSON from 204 responses
+          resStatus = 200;
           break;
         default:
           resStatus = 405;
@@ -142,7 +143,7 @@ describe("Client", () => {
     it("makes a valid DELETE request to the specified resource", async () => {
       const body = await client.delete("teapot");
       expect(body).toStrictEqual({
-        status: 204,
+        status: 200,
         request: {
           method: "DELETE",
           headers: {
@@ -238,7 +239,7 @@ describe("Client", () => {
       });
     });
 
-    describe("2xx", () => {
+    describe("2xx, expect for 204", () => {
       it("returns the json response body", async () => {
         const body = { success: true };
 
@@ -249,6 +250,14 @@ describe("Client", () => {
         const response299 = new Response(JSON.stringify(body), { status: 299 });
         const response299Body = await client.handleResponse(response299);
         expect(response299Body).toStrictEqual(body);
+      });
+    });
+
+    describe("204", () => {
+      it("returns an empty body", async () => {
+        const response = new Response(undefined, { status: 204 });
+        const responseBody = await client.handleResponse(response);
+        expect(responseBody).toBeUndefined();
       });
     });
 

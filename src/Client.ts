@@ -81,6 +81,10 @@ export default class Client {
     const statusRange = Math.floor(status / 100);
 
     if (statusRange === 2) {
+      if (status === 204) {
+        return undefined as T;
+      }
+
       const body = await response.json();
       return body;
     }
