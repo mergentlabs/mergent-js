@@ -23,7 +23,7 @@
     "package": "npm run build && npm pack"
   },
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.4.3",
