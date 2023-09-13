@@ -169,7 +169,7 @@ describe("Client", () => {
     });
 
     describe("when an error is thrown", () => {
-      it("retries up to three times, returning the result of the final perform()", async () => {
+      it("retries up to five times, returning the result of the final perform()", async () => {
         let attempts = 0;
         const responsePromise = client.retryable(async () => {
           attempts += 1;
@@ -179,7 +179,7 @@ describe("Client", () => {
         await expect(responsePromise).rejects.toThrow(
           new MergentAPIInvalidJSONError(400)
         );
-        expect(attempts).toBe(3);
+        expect(attempts).toBe(5);
       });
     });
 

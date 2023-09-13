@@ -45,7 +45,7 @@ export default class Client {
     });
   }
 
-  async retryable<T>(perform: () => Promise<T>, attempts = 3): Promise<T> {
+  async retryable<T>(perform: () => Promise<T>, attempts = 5): Promise<T> {
     const attemptsLeft = attempts - 1;
     try {
       return await perform();
