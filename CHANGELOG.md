@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [1.6.0] - 2023-09-13
+
+- Abort and retry requests after a timeout of 30s
+- Increase maximum number of request attempts from 3 to 5
+- Various TypeScript & development dependency updates
+
 ## [1.5.1] - 2023-02-27
 
 - Fix for retries/errors on task deletion requests
