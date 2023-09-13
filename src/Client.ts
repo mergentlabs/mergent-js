@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { AbortSignal } from "node-fetch/externals";
 import type { Response } from "node-fetch";
 import {
   MergentAPIError,
@@ -63,16 +64,25 @@ export default class Client {
     path: string,
     bodyObject?: object
   ): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // 30 seconds
+
     const headers = {
       Authorization: `Bearer ${this.config.apiKey}`,
       ...(bodyObject ? { "Content-Type": "application/json" } : {}),
     };
     const body = bodyObject ? JSON.stringify(bodyObject) : undefined;
-    return fetch(`https://api.mergent.co/v2${path}`, {
-      method,
-      headers,
-      body,
-    });
+
+    try {
+      return await fetch(`https://api.mergent.co/v2${path}`, {
+        method,
+        headers,
+        body,
+        signal: controller.signal as AbortSignal, // https://github.com/node-fetch/node-fetch/issues/1652
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
