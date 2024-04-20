@@ -32,3 +32,5 @@ export interface CreateScheduleParams {
    */
   dtstart?: string;
 }
+
+export type UpdateScheduleParams = Partial<CreateScheduleParams>;
