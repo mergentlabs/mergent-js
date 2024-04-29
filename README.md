@@ -35,6 +35,15 @@ mergent.tasks
   })
   .then((task) => console.log(task))
   .catch((error) => console.error(error));
+
+// create a recurring Schedule that will make an HTTP request every minute
+mergent.schedules
+  .create({
+    request: { url: "...", body: "Hello, world!" },
+    cron: "* * * * *",
+  })
+  .then((task) => console.log(task))
+  .catch((error) => console.error(error));
 ```
 
 ### Usage with TypeScript
@@ -50,6 +59,15 @@ mergent.tasks
   .create({
     request: { url: "...", body: "Hello, world!" },
     delay: { minutes: 5 },
+  })
+  .then((task) => console.log(task))
+  .catch((error) => console.error(error));
+
+// create a recurring Schedule that will make an HTTP request every minute
+mergent.schedules
+  .create({
+    request: { url: "...", body: "Hello, world!" },
+    cron: "* * * * *",
   })
   .then((task) => console.log(task))
   .catch((error) => console.error(error));
