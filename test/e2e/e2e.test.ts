@@ -75,4 +75,50 @@ describe("e2e", () => {
       MergentAPIError
     );
   });
+
+  test("schedules", async () => {
+    // create
+    const url = "https://jsonplaceholder.typicode.com/posts";
+    const scheduledFor = new Date();
+    scheduledFor.setFullYear(2030);
+
+    const schedule = await mergent.schedules.create({
+      cron: "* * * * *",
+      request: {
+        url,
+      },
+    });
+    expect(schedule.id.length).toBe(36);
+    expect(schedule.request.url).toBe(url);
+
+    // retrieve
+    const retrievedSchedule = await mergent.schedules.retrieve(schedule.id);
+    expect(retrievedSchedule.id).toBe(schedule.id);
+    expect(retrievedSchedule.request.url).toBe(schedule.request.url);
+
+    // update
+    const updatedURL =
+      "https://jsonplaceholder.typicode.com/posts?updated=true";
+
+    const updatedSchedule = await mergent.schedules.update(schedule.id, {
+      request: {
+        url: updatedURL,
+      },
+    });
+    expect(updatedSchedule.id).toBe(schedule.id);
+    expect(updatedSchedule.request.url).toBe(updatedURL);
+
+    // list
+    const schedules = await mergent.schedules.list();
+    const scheduleIDs = schedules.map((t) => t.id);
+    expect(scheduleIDs).toContain(schedule.id);
+
+    // delete
+    await expect(mergent.schedules.delete(schedule.id)).resolves.not.toThrow(
+      MergentAPIError
+    );
+    await expect(mergent.schedules.retrieve(schedule.id)).rejects.toThrow(
+      MergentAPIError
+    );
+  });
 });
