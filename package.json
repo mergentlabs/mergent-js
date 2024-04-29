@@ -28,7 +28,7 @@
   "devDependencies": {
     "@jest/globals": "^29.4.3",
     "@tsconfig/strictest": "^2.0.1",
-    "@types/node-fetch": "^2.5.12",
+    "@types/node-fetch": "^2.6.11",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "eslint": "^8.6.0",
