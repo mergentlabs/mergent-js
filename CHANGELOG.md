@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.7.0] - 2024-04-29
+
+- Add resources for Schedules
+- Various TypeScript & development dependency updates
+
 ## [1.6.0] - 2023-09-13
 
 - Abort and retry requests after a timeout of 30s
