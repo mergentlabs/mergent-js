@@ -41,6 +41,6 @@
     "node-mocks-http": "^1.11.0",
     "prettier": "^3.0.2",
     "ts-jest": "^29.0.5",
-    "typescript": "^5.0.4"
+    "typescript": "^5.4.5"
   }
 }
