@@ -5,7 +5,7 @@ export default interface Schedule {
   name?: string;
   description?: string;
   queue: string;
-  status: string;
+  paused?: boolean;
   cron?: string;
   rrule?: string;
   dtstart?: string;
@@ -15,6 +15,7 @@ export interface CreateScheduleParams {
   name?: string;
   description?: string;
   queue?: string;
+  paused?: boolean;
   request: Request;
 
   /**
@@ -32,3 +33,5 @@ export interface CreateScheduleParams {
    */
   dtstart?: string;
 }
+
+export type UpdateScheduleParams = Partial<CreateScheduleParams>;
