@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { afterAll, describe, expect, it } from "@jest/globals";
 import { Response as NFResponse } from "node-fetch";
 import Client from "../src/Client";
@@ -27,6 +26,7 @@ interface MockServerResponseBody {
 }
 
 const mockServer = startMockServer((http) => [
+  //eslint-disable-next-line sonarjs/cognitive-complexity
   http.all(url, async ({ request }) => {
     let resStatus = 500;
 
@@ -45,11 +45,13 @@ const mockServer = startMockServer((http) => [
         case "PATCH":
           resStatus = hasJSONContentType ? 200 : 415;
           break;
+        /* eslint-disable sonarjs/no-duplicated-branches */
         case "DELETE":
           if (hasJSONContentType) break;
           // 200 instead of 204 since we do not parse JSON from 204 responses
           resStatus = 200;
           break;
+        /* eslint-enable sonarjs/no-duplicated-branches */
         default:
           resStatus = 405;
       }
@@ -80,7 +82,9 @@ const mockServer = startMockServer((http) => [
   }),
 ]);
 
-afterAll(() => mockServer.close());
+afterAll(() => {
+  mockServer.close();
+});
 
 describe("Client", () => {
   const client = new Client({ apiKey });
@@ -172,7 +176,7 @@ describe("Client", () => {
     describe("when an error is thrown", () => {
       it("retries up to five times, returning the result of the final perform()", async () => {
         let attempts = 0;
-        const responsePromise = client.retryable(async () => {
+        const responsePromise = client.retryable(() => {
           attempts += 1;
           throw new MergentAPIInvalidJSONError(400);
         });

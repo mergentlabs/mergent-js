@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, expect, it } from "@jest/globals";
 
 import RequestValidator from "../src/RequestValidator";

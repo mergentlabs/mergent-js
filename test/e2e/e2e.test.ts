@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, expect, test } from "@jest/globals";
 import Mergent from "../../src/Mergent";
 import { MergentAPIError } from "../../src/errors";
@@ -8,7 +7,7 @@ import { MergentAPIError } from "../../src/errors";
  * provided.
  */
 describe("e2e", () => {
-  const apiKey = process.env["E2E_TESTING_MERGENT_API_KEY"] || "";
+  const apiKey = process.env["E2E_TESTING_MERGENT_API_KEY"] ?? "";
 
   if (apiKey.length === 0) {
     test("disabled", () => {

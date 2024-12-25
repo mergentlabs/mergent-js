@@ -1,5 +1,5 @@
 export default interface Request {
   url: string;
-  headers?: {};
+  headers?: object;
   body?: string;
 }

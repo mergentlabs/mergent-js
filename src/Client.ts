@@ -39,10 +39,10 @@ export default class Client {
     });
   }
 
-  async delete(resource: string): Promise<void> {
-    return this.retryable<void>(async () => {
+  async delete<T>(resource: string): Promise<T> {
+    return this.retryable(async () => {
       const response = await this.makeRequest("DELETE", `/${resource}`);
-      return this.handleResponse<void>(response);
+      return this.handleResponse<T>(response);
     });
   }
 
@@ -65,7 +65,9 @@ export default class Client {
     bodyObject?: object
   ): Promise<Response> {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000); // 30 seconds
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 30000); // 30 seconds
 
     const headers = {
       Authorization: `Bearer ${this.config.apiKey}`,
@@ -95,12 +97,12 @@ export default class Client {
         return undefined as T;
       }
 
-      const body = await response.json();
+      const body = (await response.json()) as T;
       return body;
     }
 
     if (statusRange === 4) {
-      const body = await response.json();
+      const body = (await response.json()) as Error;
       if (body.message) {
         throw new MergentAPIError(body);
       }

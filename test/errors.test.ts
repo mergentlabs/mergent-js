@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, expect, it, test } from "@jest/globals";
 import {
   MergentAPIError,
@@ -20,15 +19,15 @@ describe("MergentAPIError", () => {
     expect(error.message).toBe(json.message);
     expect(error.errors).toHaveLength(3);
 
-    const e0 = error.errors && error.errors[0];
+    const e0 = error.errors?.[0];
     expect(e0?.message).toBe("param0 error");
     expect(e0?.param).toBe("param0");
 
-    const e1 = error.errors && error.errors[1];
+    const e1 = error.errors?.[1];
     expect(e1?.message).toBe("param1 error");
     expect(e1?.param).toBe("param1");
 
-    const e2 = error.errors && error.errors[2];
+    const e2 = error.errors?.[2];
     expect(e2?.message).toBe("another error");
     expect(e2?.param).toBeUndefined();
   });

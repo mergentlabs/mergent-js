@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { describe, expect, it, jest } from "@jest/globals";
 
 import Client from "../../src/Client";
@@ -13,7 +12,7 @@ const tasks = new Tasks(client);
 describe("#create", () => {
   describe("with a queue param", () => {
     it("makes a request to create a Task on the specified queue", async () => {
-      tasks.create({ queue: "foo", request: { url: "" } });
+      await tasks.create({ queue: "foo", request: { url: "" } });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "foo",
         request: { url: "" },
@@ -23,7 +22,7 @@ describe("#create", () => {
 
   describe("without a queue param", () => {
     it("makes a request to create a Task on the default queue", async () => {
-      tasks.create({ request: { url: "" } });
+      await tasks.create({ request: { url: "" } });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
@@ -34,7 +33,7 @@ describe("#create", () => {
   describe("with a scheduledFor param", () => {
     it("makes a request to create a Task scheduled for the specified date", async () => {
       const scheduledFor = new Date();
-      tasks.create({ request: { url: "" }, scheduledFor });
+      await tasks.create({ request: { url: "" }, scheduledFor });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
@@ -48,7 +47,7 @@ describe("#create", () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const scheduled_for = "2022-10-17T22:28:17.615Z";
       const scheduledFor = new Date();
-      tasks.create({ request: { url: "" }, scheduledFor, scheduled_for });
+      await tasks.create({ request: { url: "" }, scheduledFor, scheduled_for });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
@@ -58,9 +57,9 @@ describe("#create", () => {
   });
 
   describe("with a delay param", () => {
-    it("makes a request to create a Task, setting the delay to the specified Duration serialized to a duration string", () => {
+    it("makes a request to create a Task, setting the delay to the specified Duration serialized to a duration string", async () => {
       const delay: Duration = { minutes: 7, seconds: 3 };
-      tasks.create({ request: { url: "" }, delay });
+      await tasks.create({ request: { url: "" }, delay });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
@@ -68,8 +67,8 @@ describe("#create", () => {
       });
     });
 
-    it("makes a request to create a Task, setting the delay to the specified string", () => {
-      tasks.create({ request: { url: "" }, delay: "5m" });
+    it("makes a request to create a Task, setting the delay to the specified string", async () => {
+      await tasks.create({ request: { url: "" }, delay: "5m" });
       expect(client.post).toHaveBeenCalledWith("tasks", {
         queue: "default",
         request: { url: "" },
@@ -80,9 +79,9 @@ describe("#create", () => {
 });
 
 describe("#retrieve", () => {
-  it("makes a request to retrieve the specified Task", () => {
+  it("makes a request to retrieve the specified Task", async () => {
     const id = "08072539-82a6-43d3-aaf9-28156533c84f";
-    tasks.retrieve(id);
+    await tasks.retrieve(id);
     expect(client.get).toHaveBeenCalledWith(`tasks/${id}`);
   });
 });
@@ -90,8 +89,8 @@ describe("#retrieve", () => {
 describe("#update", () => {
   const id = "08072539-82a6-43d3-aaf9-28156533c84f";
 
-  it("makes a request to update the specified Task", () => {
-    tasks.update(id, {
+  it("makes a request to update the specified Task", async () => {
+    await tasks.update(id, {
       delay: { minutes: 5 },
     });
     expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
@@ -102,7 +101,7 @@ describe("#update", () => {
   describe("with a scheduledFor param", () => {
     it("makes a request to update a Task scheduled for the specified date", async () => {
       const scheduledFor = new Date();
-      tasks.update(id, { scheduledFor });
+      await tasks.update(id, { scheduledFor });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
         scheduled_for: scheduledFor.toISOString(),
       });
@@ -114,7 +113,7 @@ describe("#update", () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const scheduled_for = "2022-10-17T22:28:17.615Z";
       const scheduledFor = new Date();
-      tasks.update(id, { scheduledFor, scheduled_for });
+      await tasks.update(id, { scheduledFor, scheduled_for });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
         scheduled_for: scheduledFor.toISOString(),
       });
@@ -122,16 +121,16 @@ describe("#update", () => {
   });
 
   describe("with a delay param", () => {
-    it("makes a request to update a Task, setting the delay to the specified Duration serialized to a duration string", () => {
+    it("makes a request to update a Task, setting the delay to the specified Duration serialized to a duration string", async () => {
       const delay: Duration = { minutes: 7, seconds: 3 };
-      tasks.update(id, { delay });
+      await tasks.update(id, { delay });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
         delay: "7m3s",
       });
     });
 
-    it("makes a request to create a Task, setting the delay to the specified string", () => {
-      tasks.update(id, { delay: "5m" });
+    it("makes a request to create a Task, setting the delay to the specified string", async () => {
+      await tasks.update(id, { delay: "5m" });
       expect(client.patch).toHaveBeenCalledWith(`tasks/${id}`, {
         delay: "5m",
       });
@@ -140,24 +139,24 @@ describe("#update", () => {
 });
 
 describe("#run", () => {
-  it("makes a request to run the specified Task", () => {
+  it("makes a request to run the specified Task", async () => {
     const id = "08072539-82a6-43d3-aaf9-28156533c84f";
-    tasks.run(id);
+    await tasks.run(id);
     expect(client.post).toHaveBeenCalledWith(`tasks/${id}/run`);
   });
 });
 
 describe("#list", () => {
-  it("makes a request to retrieve Tasks", () => {
-    tasks.list();
+  it("makes a request to retrieve Tasks", async () => {
+    await tasks.list();
     expect(client.get).toHaveBeenCalledWith("tasks");
   });
 });
 
 describe("#delete", () => {
-  it("makes a request to delete the specified Task", () => {
+  it("makes a request to delete the specified Task", async () => {
     const id = "08072539-82a6-43d3-aaf9-28156533c84f";
-    tasks.delete(id);
+    await tasks.delete(id);
     expect(client.delete).toHaveBeenCalledWith(`tasks/${id}`);
   });
 });

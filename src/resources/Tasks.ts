@@ -43,6 +43,7 @@ export default class Tasks {
   ): Partial<T> {
     return {
       ...params,
+      // eslint-disable-next-line @typescript-eslint/no-deprecated, sonarjs/deprecation
       scheduled_for: params.scheduledFor?.toISOString() ?? params.scheduled_for,
       scheduledFor: undefined,
       delay:
