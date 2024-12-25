@@ -18,7 +18,7 @@ export class MergentAPIError extends MergentError {
 
     this.param = params.param;
     this.errors = params.errors?.map(
-      (errorParams) => new MergentAPIError(errorParams)
+      (errorParams) => new MergentAPIError(errorParams),
     );
   }
 }

@@ -68,10 +68,10 @@ describe("e2e", () => {
 
     // delete
     await expect(mergent.tasks.delete(task.id)).resolves.not.toThrow(
-      MergentAPIError
+      MergentAPIError,
     );
     await expect(mergent.tasks.retrieve(task.id)).rejects.toThrow(
-      MergentAPIError
+      MergentAPIError,
     );
   });
 
@@ -114,10 +114,10 @@ describe("e2e", () => {
 
     // delete
     await expect(mergent.schedules.delete(schedule.id)).resolves.not.toThrow(
-      MergentAPIError
+      MergentAPIError,
     );
     await expect(mergent.schedules.retrieve(schedule.id)).rejects.toThrow(
-      MergentAPIError
+      MergentAPIError,
     );
   });
 });

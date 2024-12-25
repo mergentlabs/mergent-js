@@ -36,13 +36,13 @@ describe("MergentAPIError", () => {
 test("MergentAPIInvalidJSONError", () => {
   const error = new MergentAPIInvalidJSONError(500);
   expect(error.message).toBe(
-    "[500] Invalid JSON received from the Mergent API"
+    "[500] Invalid JSON received from the Mergent API",
   );
 });
 
 test("MergentAPIUnexpectedStatusCodeError", () => {
   const error = new MergentAPIUnexpectedStatusCodeError(500);
   expect(error.message).toBe(
-    "[500] Unexpected status code received from the Mergent API"
+    "[500] Unexpected status code received from the Mergent API",
   );
 });

@@ -62,7 +62,7 @@ export default class Client {
   async makeRequest(
     method: "GET" | "PATCH" | "POST" | "DELETE",
     path: string,
-    bodyObject?: object
+    bodyObject?: object,
   ): Promise<Response> {
     const controller = new AbortController();
     const timeout = setTimeout(() => {

@@ -182,7 +182,7 @@ describe("Client", () => {
         });
 
         await expect(responsePromise).rejects.toThrow(
-          new MergentAPIInvalidJSONError(400)
+          new MergentAPIInvalidJSONError(400),
         );
         expect(attempts).toBe(5);
       });
@@ -234,12 +234,12 @@ describe("Client", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
         const response100 = new NFResponse(undefined, { status: 100 });
         await expect(client.handleResponse(response100)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(100)
+          new MergentAPIUnexpectedStatusCodeError(100),
         );
 
         const response199 = new NFResponse(undefined, { status: 199 });
         await expect(client.handleResponse(response199)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(199)
+          new MergentAPIUnexpectedStatusCodeError(199),
         );
       });
     });
@@ -274,12 +274,12 @@ describe("Client", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
         const response300 = new NFResponse(undefined, { status: 300 });
         await expect(client.handleResponse(response300)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(300)
+          new MergentAPIUnexpectedStatusCodeError(300),
         );
 
         const response399 = new NFResponse(undefined, { status: 399 });
         await expect(client.handleResponse(response399)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(399)
+          new MergentAPIUnexpectedStatusCodeError(399),
         );
       });
     });
@@ -292,21 +292,21 @@ describe("Client", () => {
           status: 400,
         });
         await expect(client.handleResponse(response400)).rejects.toThrow(
-          new MergentAPIError(body as unknown as MergentAPIErrorParams)
+          new MergentAPIError(body as unknown as MergentAPIErrorParams),
         );
 
         const response499 = new NFResponse(JSON.stringify(body), {
           status: 499,
         });
         await expect(client.handleResponse(response499)).rejects.toThrow(
-          new MergentAPIError(body as unknown as MergentAPIErrorParams)
+          new MergentAPIError(body as unknown as MergentAPIErrorParams),
         );
       });
 
       it("throws a MergentAPIInvalidJSONError when the response body does not have an error message", async () => {
         const response = new NFResponse(JSON.stringify({}), { status: 400 });
         await expect(client.handleResponse(response)).rejects.toThrow(
-          new MergentAPIInvalidJSONError(400)
+          new MergentAPIInvalidJSONError(400),
         );
       });
     });
@@ -315,12 +315,12 @@ describe("Client", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
         const response500 = new NFResponse(undefined, { status: 500 });
         await expect(client.handleResponse(response500)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(500)
+          new MergentAPIUnexpectedStatusCodeError(500),
         );
 
         const response599 = new NFResponse(undefined, { status: 599 });
         await expect(client.handleResponse(response599)).rejects.toThrow(
-          new MergentAPIUnexpectedStatusCodeError(599)
+          new MergentAPIUnexpectedStatusCodeError(599),
         );
       });
     });

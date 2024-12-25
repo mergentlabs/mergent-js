@@ -39,7 +39,7 @@ export default class Tasks {
   }
 
   static requestParams<T extends CreateTaskParams | UpdateTaskParams>(
-    params: T
+    params: T,
   ): Partial<T> {
     return {
       ...params,

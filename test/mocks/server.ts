@@ -6,7 +6,7 @@ import { setupServer } from "msw/node";
  * Callers MUST call `server.close()` on the returned server.
  */
 export default function startMockServer(
-  setupHandler: (http: typeof mswHTTP) => RequestHandler[]
+  setupHandler: (http: typeof mswHTTP) => RequestHandler[],
 ) {
   const handlers = setupHandler(mswHTTP);
   const server = setupServer(...handlers);
