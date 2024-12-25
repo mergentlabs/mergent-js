@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterAll, describe, expect, it } from "@jest/globals";
-import { Response } from "node-fetch";
+import { Response as NFResponse } from "node-fetch";
 import Client from "../src/Client";
 import {
   MergentAPIError,
@@ -26,15 +26,15 @@ interface MockServerResponseBody {
   };
 }
 
-const mockServer = startMockServer((rest) => [
-  rest.all(url, async (req, res, ctx) => {
+const mockServer = startMockServer((http) => [
+  http.all(url, async ({ request }) => {
     let resStatus = 500;
 
-    if (req.headers.get("Authorization") === authorization) {
+    if (request.headers.get("Authorization") === authorization) {
       const hasJSONContentType =
-        req.headers.get("Content-Type") === "application/json";
+        request.headers.get("Content-Type") === "application/json";
 
-      switch (req.method) {
+      switch (request.method) {
         case "GET":
           if (hasJSONContentType) break;
           resStatus = 200;
@@ -60,22 +60,23 @@ const mockServer = startMockServer((rest) => [
     const resBody: MockServerResponseBody = {
       status: resStatus,
       request: {
-        method: req.method,
+        method: request.method,
         headers: {
-          Authorization: req.headers.get("Authorization") ?? undefined,
-          "Content-Type": req.headers.get("Content-Type") ?? undefined,
+          Authorization: request.headers.get("Authorization") ?? undefined,
+          "Content-Type": request.headers.get("Content-Type") ?? undefined,
         },
-        body: await (async () => {
-          try {
-            return await req.json();
-          } catch {
-            return undefined;
-          }
-        })(),
+        body: (await request.json().catch(() => undefined)) as
+          | object
+          | undefined,
       },
     };
 
-    return res(ctx.status(resStatus), ctx.json(resBody));
+    return new Response(JSON.stringify(resBody), {
+      status: resStatus,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }),
 ]);
 
@@ -227,12 +228,12 @@ describe("Client", () => {
   describe("#handleResponse", () => {
     describe("1xx", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
-        const response100 = new Response(undefined, { status: 100 });
+        const response100 = new NFResponse(undefined, { status: 100 });
         await expect(client.handleResponse(response100)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(100)
         );
 
-        const response199 = new Response(undefined, { status: 199 });
+        const response199 = new NFResponse(undefined, { status: 199 });
         await expect(client.handleResponse(response199)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(199)
         );
@@ -243,11 +244,15 @@ describe("Client", () => {
       it("returns the json response body", async () => {
         const body = { success: true };
 
-        const response200 = new Response(JSON.stringify(body), { status: 200 });
+        const response200 = new NFResponse(JSON.stringify(body), {
+          status: 200,
+        });
         const response200Body = await client.handleResponse(response200);
         expect(response200Body).toStrictEqual(body);
 
-        const response299 = new Response(JSON.stringify(body), { status: 299 });
+        const response299 = new NFResponse(JSON.stringify(body), {
+          status: 299,
+        });
         const response299Body = await client.handleResponse(response299);
         expect(response299Body).toStrictEqual(body);
       });
@@ -255,7 +260,7 @@ describe("Client", () => {
 
     describe("204", () => {
       it("returns an empty body", async () => {
-        const response = new Response(undefined, { status: 204 });
+        const response = new NFResponse(undefined, { status: 204 });
         const responseBody = await client.handleResponse(response);
         expect(responseBody).toBeUndefined();
       });
@@ -263,12 +268,12 @@ describe("Client", () => {
 
     describe("3xx", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
-        const response300 = new Response(undefined, { status: 300 });
+        const response300 = new NFResponse(undefined, { status: 300 });
         await expect(client.handleResponse(response300)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(300)
         );
 
-        const response399 = new Response(undefined, { status: 399 });
+        const response399 = new NFResponse(undefined, { status: 399 });
         await expect(client.handleResponse(response399)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(399)
         );
@@ -279,19 +284,23 @@ describe("Client", () => {
       it("throws a MergentAPIError when the body has an error message", async () => {
         const body = { message: "Something went wrong." };
 
-        const response400 = new Response(JSON.stringify(body), { status: 400 });
+        const response400 = new NFResponse(JSON.stringify(body), {
+          status: 400,
+        });
         await expect(client.handleResponse(response400)).rejects.toThrow(
           new MergentAPIError(body as unknown as MergentAPIErrorParams)
         );
 
-        const response499 = new Response(JSON.stringify(body), { status: 499 });
+        const response499 = new NFResponse(JSON.stringify(body), {
+          status: 499,
+        });
         await expect(client.handleResponse(response499)).rejects.toThrow(
           new MergentAPIError(body as unknown as MergentAPIErrorParams)
         );
       });
 
       it("throws a MergentAPIInvalidJSONError when the response body does not have an error message", async () => {
-        const response = new Response(JSON.stringify({}), { status: 400 });
+        const response = new NFResponse(JSON.stringify({}), { status: 400 });
         await expect(client.handleResponse(response)).rejects.toThrow(
           new MergentAPIInvalidJSONError(400)
         );
@@ -300,12 +309,12 @@ describe("Client", () => {
 
     describe("5xx", () => {
       it("throws a MergentAPIUnexpectedStatusCodeError", async () => {
-        const response500 = new Response(undefined, { status: 500 });
+        const response500 = new NFResponse(undefined, { status: 500 });
         await expect(client.handleResponse(response500)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(500)
         );
 
-        const response599 = new Response(undefined, { status: 599 });
+        const response599 = new NFResponse(undefined, { status: 599 });
         await expect(client.handleResponse(response599)).rejects.toThrow(
           new MergentAPIUnexpectedStatusCodeError(599)
         );
